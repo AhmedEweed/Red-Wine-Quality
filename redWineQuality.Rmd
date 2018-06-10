@@ -1,0 +1,456 @@
+---
+title: "Red Wine Quality"
+author: Ahmed Eweed
+date: June 9, 2018
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+# Introduction  
+
+This is one of two datasets involving red and white wine samples,  
+Created by: Paulo Cortez (Univ. Minho), Antonio Cerdeira, Fernando Almeida,  
+Telmo Matos and Jose Reis (CVRVV) @ 2009.  
+It involves 1599 observations about 11 chemical features and  
+an output result (quality) of the Portuguese "Vinho Verde" wine.  
+Wine trade is huge around the world from planting grapes, fermentation and  
+bottling of the finished liquid.  
+I wondered which factor affects a wine taste and quality the most?  
+Is that sugar, alcohol percentage or maybe it's one of the acids  
+or other chemicals added to the wine through the production process.  
+We will find out if my assumptions were right!  
+
+Citation: P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.  
+Modeling wine preferences by data mining from physicochemical properties.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+#loading libraries
+library(ggplot2)
+# Loading Data, rw for 'red wine'
+rw <- read.csv("wineQualityReds.csv")
+```
+I will explore the distribution of the features across the dataset  
+to see if there is any abnormal behaviours or misleading data
+# Univariate Plots Section
+```{r echo=FALSE, Univariate_Plots, message=FALSE, warning=FALSE}
+#exploring dataset strcture 
+str(rw)
+```
+
+we can see 13 variables of 11 features and a result score (quality) plus a counter (X)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#quality bar chart
+ggplot(aes(quality), data = rw)+
+  geom_bar(binwidth = 1/10)+
+  xlab("Quality")+
+  ylab("Number of wines")+
+  ggtitle("Red Wine Quality distribution")
+
+summary(rw$quality)
+```
+red Wine quality is normally distributed with mean of about 5.5 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#fixed acidity bar chart
+ggplot(aes(fixed.acidity), data = rw)+
+  geom_bar(binwidth = 1/10)+
+  xlab("Fixed Acidity (g/dm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("Fixed Acidity distribuiton")
+
+summary(rw$fixed.acidity)
+```
+Fixed Acidity is skewed to the right with mean of 8
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#volatile acidity bar chart
+ggplot(aes(volatile.acidity), data = rw)+
+  geom_bar(binwidth = 1/100)+
+  xlab("Volatile Acidity (g/dm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("Volatile Acidity distribution")
+
+summary(rw$volatile.acidity)
+```
+Volatile Acidity is skewed to the right with a mean of 0.5
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#citric acid bar chart
+ggplot(aes(citric.acid), data = rw)+
+  geom_bar(binwidth = 1/50)+
+  xlab("Citric Acid (g/dm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("Citric Acid distribution")
+
+summary(rw$citric.acid)
+```
+Citric Acid is not normally distributed!
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#residual sugar boxplot
+ggplot(aes(residual.sugar), data = rw)+
+  geom_bar(binwidth = 1/80)+
+  ylab("Number of wines")+
+  xlab("Residual Sugar (g/dm^3)")+
+  scale_x_log10(breaks =seq(0.85, 15, 3),
+                limits =c(0.85, 15))+
+  ggtitle("Residual Sugar distribution")
+
+summary(rw$residual.sugar)
+```
+Residual Sugar is left skewed with many outliers on the right 
+and more the 75% of the data are concentrated under 2.6  
+this distribution is suspicious!
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#chlorides bar chart
+ggplot(aes(chlorides), data = rw)+
+  geom_bar(binwidth = 1/200)+
+  xlab("Chlorides (g/dm^3)")+
+  ylab("Number of wines")+
+  scale_y_log10()+
+  ggtitle("Chlorides distribution")
+
+summary(rw$chlorides)
+```
+Chlorides are not normally distributed with mean of about 0.1 and have many outliers
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#free sulfur dioxide bar chart
+ggplot(aes(free.sulfur.dioxide), data = rw)+
+  geom_bar(binwidth = 1)+
+  xlab("Free Sulfur Dioxide (mg/dm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("Free Sulfur Dioxide distribution")
+
+summary(rw$free.sulfur.dioxide)
+```
+Free Sulfur Dioxide is skewed to the right with mean at 15
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#total sulfur dioxide bar chart
+ggplot(aes(total.sulfur.dioxide), data = rw)+
+  geom_bar(binwidth = 5)+
+  xlab("Total Sulfur Dioxide (mg/dm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("Total Sulfur Dioxide distribution")
+
+summary(rw$total.sulfur.dioxide)
+```
+Total Sulfur Dioxide is skewed to the right with mean of 46 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#density bar chart
+ggplot(aes(density), data = rw)+
+  geom_bar(binwidth = 1/700)+
+  xlab("Density (g/cm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("Density distribution")
+
+summary(rw$density)
+```
+Density is normally distributed with mean of 0.99 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#pH bar chart
+ggplot(aes(pH), data = rw)+
+  geom_bar(binwidth = 1/10)+
+  xlab("pH")+
+  ylab("Number of Wines")+
+  ggtitle("pH distribution")
+
+summary(rw$pH)
+```
+pH is normally distributed with mean of 3 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#sulphates bar chart
+ggplot(aes(sulphates), data = rw)+
+  geom_bar(binwidth = 1/10)+
+  xlab("Sulphates (g/dm^3)")+
+  ylab("Number of Wines")+
+  ggtitle("sulphates distribution")
+
+summary(rw$sulphates)
+```
+sulphates is skewed to the right with mean of 0.6
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#alcohol bar chart
+ggplot(aes(alcohol), data = rw)+
+  geom_bar(binwidth = 1/5)+
+  xlab("ALcohol (%)")+
+  ylab("Number of Wines")+
+  ggtitle("alcohol distribution")
+
+summary(rw$alcohol)
+```
+alcohol is skewed to the right with mean of 10  
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+We have 1599 observations with 13 variables,
+a counter (X), the result score (quality) and 11 chemical features as follows:
+(fixed acidity, volatile acidity, citric acid, residual sugar, chlorides,
+free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, alcohol)
+
+### What is/are the main feature(s) of interest in your dataset?
+
+I found citric acid and volatile acidity interesting 
+
+### What other features in the dataset do you think
+### will help support your investigation into your feature(s) of interest?
+
+I think alcohol and sulphates will be interesting too
+
+### Did you create any new variables from existing variables in the dataset?
+
+no i didn't
+
+### Of the features you investigated, were there any unusual distributions?  
+### Did you perform any operations on the data to tidy, adjust,
+### or change the form of the data?  
+### If so, why did you do this?
+
+citric acid is not normally distibuted
+also Residual sugar is suspicious with alot of outlier data
+
+
+yes, Chlorides and residual sugar was log transformed to avoid outlier presence  
+
+# Bivariate Plots Section
+```{r echo=FALSE, Bivariate_Plots, message=FALSE, warning=FALSE}
+# scatter of quality and volatile acidity
+ggplot(aes(x = factor(quality), y = volatile.acidity), data = rw)+
+  geom_boxplot()+
+  geom_jitter(alpha = 1/5)+
+  xlab("Quality")+
+  ylab("Volatile Acidity (g/dm^3)")+
+  ggtitle("Boxplot of Volatile Acidity across quality levels")
+
+# correlation between quality and volatile acidity
+cor.test(rw$volatile.acidity, rw$quality, method = "pearson")
+```
+a weak negative correaltion (-0.39) exists between Quality and Volatile Acidity
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# scatter of quality and citric acid
+ggplot(aes(x = factor(quality), y = citric.acid), data = rw)+
+  geom_boxplot()+
+  geom_jitter(alpha = 1/5)+
+  xlab("Quality")+
+  ylab("Citric Acid (g/dm^3)")+
+  ggtitle("Boxplot of Citric Acid across quality levels")
+
+# correlation between quality and citric acid
+cor.test(rw$citric.acid, rw$quality, method = "pearson")
+```
+a weak positive correaltion (0.22) exists between Quality and Citric Acid
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# scatter between quality and sulphates
+ggplot(aes(x = factor(quality), y = sulphates), data = rw)+
+  geom_boxplot()+
+  geom_jitter(alpha = 1/5)+
+  xlab("Quality")+
+  ylab("Sulphates (g/dm^3)")+
+  ggtitle("Boxplot of Sulphates across quality levels")
+# correaltion between quality and sulphates
+cor.test(rw$sulphates, rw$quality, method = "pearson")
+```
+a weak positive correaltion (0.25) exists between Quality and Sulphates  
+many outliers exist too
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# scatter between quality and alcohol
+ggplot(aes(x = factor(quality), y = alcohol), data = rw)+
+  geom_boxplot()+
+  geom_jitter(alpha = 1/5)+
+  xlab("Quality")+
+  ylab("Alcohol (%)")+
+  ggtitle("Boxplot of Alcohol across quality levels")
+# correalation between quality and alcohol
+cor.test(rw$alcohol, rw$quality, method = "pearson")
+```
+a strong positive correaltion (0.47) exists between Quality and Alcohol
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# scatter between alcohol and density
+ggplot(aes(y = alcohol, x = density, color = factor(quality)), data = rw)+
+  geom_jitter()+
+  coord_cartesian(xlim = c(0.985, 1.005), ylim = c(5, 15))+
+  xlab("Density (g/cm^3)")+
+  ylab("Alcohol (%)")+
+  scale_color_brewer(type = 'seq')+
+  ggtitle("Relaionship of density Vs Alcohol across quality levels")+
+  theme_dark()
+# correlation between citric acid and volatie acidity
+cor.test(rw$alcohol, rw$density, method = "pearson")
+```
+a strong negative correaltion (-0.49) exists  
+between Density and Alcohol
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# scatter between alcohol and sulphates
+ggplot(aes(y = alcohol, x = sulphates, color = factor(quality)), data = rw)+
+  geom_jitter()+
+  coord_cartesian(xlim = c(0.33, 2.0), ylim = c(5, 15))+
+  xlab("Sulphates (g/dm^3)")+
+  ylab("Alcohol (%)")+
+  scale_color_brewer(type = 'seq', guide = guide_legend(title = "Quality levels"))+
+  ggtitle("Relaionship of Sulphates Vs Alcohol across quality levels")+
+  theme_dark()
+
+
+#correlation between sulphates and alcohol
+cor.test(rw$alcohol, rw$sulphates, method = "pearson")
+```
+
+there is almost no relationship between Alcohol and Sulphates
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation.
+### How did the feature(s) of interest vary with other features in the dataset?
+
+there is negative relationship between quality and volatile acidity
+also volatile acidity and citric acid have negative relationship
+
+there is positive relationship between quality and citric acid
+
+### Did you observe any interesting relationships
+### between the other features (not the main feature(s) of interest)?
+
+there are positive relationships between:
+quality and sulphates, quality and alcohol and sulphates and alcohol
+
+### What was the strongest relationship you found?
+
+the negative relationship between volatile acidity and citric acid
+was the strongest so far (-55%)
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, Multivariate_Plots}
+ggplot(aes(x = citric.acid, y = volatile.acidity),
+       data = rw)+
+  geom_jitter(aes(color = factor(quality)))+
+  scale_x_continuous()+
+  ylab("Volatile Acidity (g/dm^3)")+
+  xlab("Citric Acid (g/dm^3)")+
+  ggtitle("Quality based on Voaltile Acidity and Citric acid")+
+  scale_color_brewer(type = 'seq', guide = guide_legend(title = "Quality levels"))+
+  theme_dark()
+```
+
+low levels of citric and volatile acids relates to higher quality rates
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x = volatile.acidity, y = alcohol), data = rw)+
+  geom_jitter(aes(color = factor(quality)))+
+  xlab("Volatile Acidity (g/dm^3)")+
+  ylab("Alcohol (%)")+
+  scale_color_brewer(type = 'seq', 
+                     guide = guide_legend(title = 'Quality levels'))+
+  ggtitle("Alcohol and Volatile Acidity with quality levels")+
+  theme_dark()
+
+```
+
+
+higher Alcohol content and moderate volatile acidity level relates to higher quality rates
+
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation.
+### Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+Volatile acidity and Citric Acid has a negaive relationship with each other 
+and the less the Volatile acid and the more Citric Acid in the wine,  
+the higher rate it takes
+
+### Were there any interesting or surprising interactions between features?
+Residual sugar had no effect on the quality
+
+although it should be a major player in rating wines
+
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+
+no I didn't
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+
+ggplot(aes(quality), data = rw)+
+  geom_bar(aes(fill = factor(quality)))+
+  xlab("Quality")+
+  ylab("Number of wines")
+         
+
+```
+
+### Description One
+
+red wine quality is normally distributed with almost no wine rated 0,1,2 and 9  
+wine rate(worst----> best):  
+3 - 4 - 5 - 6 - 7 - 8
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+ggplot(aes(y = alcohol, x = density, color = factor(quality)), data = rw)+
+  geom_jitter()+
+  coord_cartesian(xlim = c(0.985, 1.005), ylim = c(5, 15))+
+  xlab("Density (g/cm^3)")+
+  ylab("Alcohol (%)")+
+  scale_color_brewer(type = 'seq')+
+  ggtitle("Relaionship of density Vs Alcohol across quality levels")+
+  theme_dark()
+
+```
+
+### Description Two
+
+higher quality is related to denser wines and more alcohol content ones  
+
+### Plot Three
+```{r echo=FALSE, Plot_Three, message= FALSE}
+
+ggplot(aes(y = alcohol, x = sulphates, color = factor(quality)), data = rw)+
+  geom_jitter()+
+  coord_cartesian(xlim = c(0.33, 2.0), ylim = c(5, 15))+
+  xlab("Sulphates (g/dm^3)")+
+  ylab("Alcohol (%)")+
+  scale_color_brewer(type = 'seq')+
+  ggtitle("Relaionship of Sulphates Vs Alcohol across quality levels")+
+  theme_dark()
+
+```
+
+### Description Three
+
+sulphates between 0.6 and 0.82 g/dm^3 and alcohol between 10 and 14 percent  
+has the highest quality rate
+
+------
+
+# Reflection
+
+Red Wine has very interesting quality factors 
+I had much fun exploring this dataset and discovering new relations between features  
+it was hard to pick the right features as all features are almost chemical  
+but, with some research and collecting data about wine production,  
+I managed to detect the right ones, or so I thought!  
+unfortunatelly, we should have more samples to make the best prediction of them  
+As Residual sugar surprisingly was ineffective in determining the quality of wine 
+I think more features are necessary to be collected to determine wine quality 
+not only chemical ones, but also grape kind and conditions of storing
+It was an interesting experience as well.
