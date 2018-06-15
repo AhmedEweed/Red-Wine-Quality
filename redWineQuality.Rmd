@@ -19,7 +19,7 @@ an output result (quality) of the Portuguese "Vinho Verde" wine.
 Wine trade is huge around the world from planting grapes, fermentation and  
 bottling of the finished liquid.  
 I wondered which factor affects a wine taste and quality the most?  
-Is that sugar, alcohol percentage or maybe it's one of the acids  
+Is that sugar, alcohol percentage or maybe it is one of the acids  
 or other chemicals added to the wine through the production process.  
 We will find out if my assumptions were right!  
 
@@ -33,14 +33,16 @@ library(ggplot2)
 rw <- read.csv("wineQualityReds.csv")
 ```
 I will explore the distribution of the features across the dataset  
-to see if there is any abnormal behaviours or misleading data
+to see if there is any abnormal behaviours or misleading data  
+
 # Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots, message=FALSE, warning=FALSE}
 #exploring dataset strcture 
 str(rw)
 ```
 
-we can see 13 variables of 11 features and a result score (quality) plus a counter (X)
+we can see 13 variables of 11 features and a result score (quality)  
+plus a counter (X)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #quality bar chart
@@ -102,7 +104,7 @@ ggplot(aes(residual.sugar), data = rw)+
 
 summary(rw$residual.sugar)
 ```
-Residual Sugar is left skewed with many outliers on the right 
+Residual Sugar is left skewed with many outliers on the right  
 and more the 75% of the data are concentrated under 2.6  
 this distribution is suspicious!
 
@@ -117,7 +119,8 @@ ggplot(aes(chlorides), data = rw)+
 
 summary(rw$chlorides)
 ```
-Chlorides are not normally distributed with mean of about 0.1 and have many outliers
+Chlorides are not normally distributed with mean of about 0.1  
+and have many outliers
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #free sulfur dioxide bar chart
@@ -302,7 +305,8 @@ ggplot(aes(y = alcohol, x = sulphates, color = factor(quality)), data = rw)+
   coord_cartesian(xlim = c(0.33, 2.0), ylim = c(5, 15))+
   xlab("Sulphates (g/dm^3)")+
   ylab("Alcohol (%)")+
-  scale_color_brewer(type = 'seq', guide = guide_legend(title = "Quality levels"))+
+  scale_color_brewer(type = 'seq',
+                     guide = guide_legend(title = "Quality levels"))+
   ggtitle("Relaionship of Sulphates Vs Alcohol across quality levels")+
   theme_dark()
 
@@ -344,7 +348,8 @@ ggplot(aes(x = citric.acid, y = volatile.acidity),
   ylab("Volatile Acidity (g/dm^3)")+
   xlab("Citric Acid (g/dm^3)")+
   ggtitle("Quality based on Voaltile Acidity and Citric acid")+
-  scale_color_brewer(type = 'seq', guide = guide_legend(title = "Quality levels"))+
+  scale_color_brewer(type = 'seq',
+                     guide = guide_legend(title = "Quality levels"))+
   theme_dark()
 ```
 
@@ -363,7 +368,8 @@ ggplot(aes(x = volatile.acidity, y = alcohol), data = rw)+
 ```
 
 
-higher Alcohol content and moderate volatile acidity level relates to higher quality rates
+higher Alcohol content and moderate volatile acidity level  
+relates to higher quality rates
 
 
 # Multivariate Analysis
@@ -445,7 +451,7 @@ has the highest quality rate
 # Reflection
 
 Red Wine has very interesting quality factors 
-I had much fun exploring this dataset and discovering new relations between features  
+I had much fun exploring the dataset and discovering new relations between features  
 it was hard to pick the right features as all features are almost chemical  
 but, with some research and collecting data about wine production,  
 I managed to detect the right ones, or so I thought!  
